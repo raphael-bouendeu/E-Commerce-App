@@ -89,8 +89,8 @@ router.post("/", async (req, res) => {
 
 router.get('/', async (req, res) => {
     //const userList = await User.find()
-    // const userList = await User.find().select('-passwordHash')
-    const userList = await User.find().select('name phone email');
+    const userList = await User.find().select('-passwordHash')
+    //const userList = await User.find().select('name phone email');
     if (!userList) {
         res.status(500).json({
             success: false

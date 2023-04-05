@@ -1,0 +1,47 @@
+<div class="cart-page">
+  <div class="grid">
+    <div class="col-8">
+      <div>
+        <p-button (onClick)="backToShop()" label="Continue shopping" icon="pi pi-arrow-left">
+        </p-button>
+      </div>
+      <div>
+        <h4>My Cart:{{cartCount}} Item(s)</h4>
+      </div>
+      <div class="cart-shipping mb-5">
+        Shipping kommt after 2 Days
+      </div>
+      <div class="cart-item mb-4" *ngFor="let cartItem of cartItemsDetailed">
+        <div class="grid p-fluid">
+          <div class="col-2">
+            <img class="cart-item-image" [src]="cartItem.product.image" [attr.alt]="cartItem.product.name">
+          </div>
+          <div class="col-7">
+            <div class="cart-item-name">{{cartItem.product.name}}</div>
+            <div class="cart-item-price">{{cartItem.product.price | currency}}</div>
+            <div class="cart-item-remove">
+              <p-button (onClick)="deleteCartItem(cartItem)" icon="pi pi-trash">
+              </p-button>
+            </div>
+          </div>
+          <div class="col-3 ">
+            <div class="field cart-item-quantity ">
+              <p-inputNumber mode="decimal" (onInput)="updateCartItemQuantity($event,cartItem)" [showButtons]="true"
+                [inputId]="cartItem.product.id" [(ngModel)]="cartItem.quantity" [min]="1" [max]="100">
+              </p-inputNumber>
+            </div>
+            <div class="cart-item-subtotal">
+              Subtotal:
+              <span class="cart-item-subtotal-value">
+                {{getTotalPrice(cartItem)| currency}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <orders-order-summary></orders-order-summary>
+    </div>
+  </div>
+</div>

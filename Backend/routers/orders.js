@@ -4,7 +4,10 @@ const { OrderItem } = require('../models/orderItem');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    const orderList = await Order.find().populate('user', 'name').sort({ 'dateOrdered': -1 })
+    //const orderList = await Order.find().populate('user', 'name').sort({ 'dateOrdered': -1 })
+
+    const orderList = await Order.find().populate("user")
+    console.log(orderList)
     if (!orderList) {
         res.status(500).json({
             success: false
@@ -16,7 +19,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const order = await Order.findById(req.params.id).populate('user', 'name')
         .populate({
-            path: 'OrderItems', populate: {
+            path: 'orderItems', populate: {
                 path: 'product', populate: 'category'
             }
         });
@@ -29,7 +32,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    const orderItemsIds = Promise.all(req.body.OrderItems.map(async orderItem => {
+    const orderItemsIds = Promise.all(req.body.orderItems.map(async orderItem => {
         let newOrderItem = new OrderItem({
             quantity: orderItem.quantity,
             product: orderItem.product
@@ -81,7 +84,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', (req, res) => {
     Order.findByIdAndRemove(req.params.id).then(async order => {
         if (order) {
-            await order.OrderItems.map(async orderItem => {
+            await order.orderItems.map(async orderItem => {
                 await OrderItem.findByIdAndRemove(orderItem)
             })
             return res.status(200).json({

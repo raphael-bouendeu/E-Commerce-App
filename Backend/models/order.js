@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
-    OrderItems: [{
+    orderItems: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'OrderItem',
         required: true
@@ -31,9 +31,9 @@ const OrderSchema = new mongoose.Schema({
         required: true
     },
     status: {
-        type: String,
+        type: Number,
         required: true,
-        default: 'Pending'
+        default: 0
     },
     totaLprice: {
         type: Number

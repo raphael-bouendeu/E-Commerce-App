@@ -60,7 +60,7 @@ const productSchema = new mongoose.Schema({
 });
 
 productSchema.virtual('id').get(function () {
-    this._id.toHexString()
+    this._id?.toHexString()
 });
 productSchema.set('toJSON', {
     virtuals: true

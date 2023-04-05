@@ -1,0 +1,56 @@
+<p-toast></p-toast>
+
+<div class="admin-page">
+  <p-card [header]="editMode? 'Update Category':'Add Category'"
+    [subheader]="editMode? 'You can update  categories here':'You can add categories here'">
+    <div class="grid mb-5">
+      <div class="col-12">
+        <p-toolbar>
+          <div class="p-toolbar-group-start">
+
+          </div>
+          <div class="p-toolbar-group-end">
+            <p-button styleClass="p-button-primary mr-4" (click)=" onSubmit()" [label]="editMode?'Update': 'Create'"
+              icon="pi pi-plus"></p-button>
+            <p-button styleClass="p-button-secondary" (click)="canceln()" label="Canceln"
+              icon="pi pi-arrow-circle-left"></p-button>
+          </div>
+        </p-toolbar>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-8">
+        <form [formGroup]="form">
+          <div class="card">
+            <div class="field grid">
+              <label for="name" class="col-12 mb-2 md:col-2 md:mb-0">Name</label>
+              <div class="col-12 md:col-10">
+                <input id="name" type="text" formControlName="name" pInputText
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                <small *ngIf="this.categoryForm['name'].invalid && isSubmited" class="p-error">Name is required</small>
+              </div>
+            </div>
+            <div class="field grid">
+              <label for="icon" class="col-12 mb-2 md:col-2 md:mb-0">Icon</label>
+              <div class="col-12 md:col-10">
+                <input id="icon" type="text" formControlName="icon" pInputText
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                <small *ngIf="this.categoryForm['icon'].invalid && isSubmited" class="p-error">Icon is required</small>
+              </div>
+            </div>
+
+            <div class="field grid">
+              <label for="color" class="col-12 mb-2 md:col-2 md:mb-0">Color</label>
+              <div class="col-12 md:col-10">
+                <p-colorPicker formControlName="color"></p-colorPicker>
+                <small *ngIf="this.categoryForm['color'].invalid && isSubmited" class="p-error">Color is
+                  required</small>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-card>
+</div>

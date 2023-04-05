@@ -5,6 +5,7 @@ const router = express.Router();
 const mongoose = require('mongoose')
 const multer = require('multer');
 
+
 const FILE_TYP_MAP = {
     'image/pmg': 'png',
     'image/jpeg': 'jpeg',
@@ -21,11 +22,11 @@ const storage = multer.diskStorage({
         cb(uploadError, 'public/uploads')
     },
     filename: function (req, file, cb) {
-
-        const filename = file.originalname.split('').join('-')
+        const filename = file.originalname.replace(" ", "-");
         const extension = FILE_TYP_MAP[file.mimetype]
-        cb(null, `${filename}-${Date.now()}.${extension}`)
-    }
+        cb(null, `${filename}-${Date.now()}.${extension}`);
+    },
+
 })
 
 const uploadOptions = multer({ storage: storage })
@@ -38,12 +39,12 @@ router.get('/', async (req, res) => {
         filter = { category: req.query.categories.split(',') }
     }
 
-    const productList = await Product.find(filter)
+    const productList = await Product.find(filter).populate('category');
     //const productList = await Product.find({categories:["2424242","62626262"]})
-    // const productList = await Product.find().populate('category')
+    //const productList = await Product.find().populate('category')
 
     // select only name image ohne id
-    // const productList = await Product.find().select("name image -_id")
+    //const productList = await Product.find().select("name image -_id")
     if (!productList) {
         res.status(500).json({
             success: false
@@ -199,27 +200,35 @@ router.get('/get/featured/:count', async (req, res) => {
     })
 });
 
-router.put('/gallery-images/:id', uploadOptions.array('images', 10), async (req, res) => {
-    if (!mongoose.isValidObjectId(req.params.id)) {
-        return res.status(400).send('Invalid Product Id')
-    }
-    const files = req.files;
-    let imagesPaths = []
-    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`
-    if (files) {
-        files.map(file => {
-            imagesPaths.push(`${basePath}${file.fileName}`)
-        })
-    }
-    const product = await Product.findByIdAndUpdate(req.params.id, {
-        images: imagesPaths
-    }, {
-        new: true
-    })
-    if (!product) {
-        return res.status(400).send('the product cannot be updated!')
-    }
-    res.send(product);
+router.put(
+    '/gallery-images/:id',
+    uploadOptions.array('images', 10),
+    async (req, res) => {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).send('Invalid Product Id')
+        }
+        const files = req.files;
+        let imagesPaths = [];
+        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
-})
+        if (files) {
+            files.map(file => {
+                imagesPaths.push(`${basePath}${file.filename}`);
+            })
+        }
+
+        const product = await Product.findByIdAndUpdate(
+            req.params.id,
+            {
+                images: imagesPaths
+            },
+            { new: true }
+        )
+
+        if (!product)
+            return res.status(500).send('the gallery cannot be updated!')
+
+        res.send(product);
+    }
+)
 module.exports = router;
